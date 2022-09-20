@@ -1,5 +1,6 @@
 import requests
 from api_secrets import API_KEY_ASSEMBLYAI
+import youtube_dl
 
 upload_endpoint = 'https://api.assemblyai.com/v2/upload'
 transcript_endpoint = "https://api.assemblyai.com/v2/transcript"
@@ -57,3 +58,16 @@ def save_transcript(audio_url, filename):
         print("Transcription saved!")
     elif error:
         print("Error! ", error)
+
+def downloadYouTubeAsMp3(link):
+    video_info = youtube_dl.YoutubeDL().extract_info(url=link, download=False)
+    filename = f"{video_info['title']}.mp3"
+    options={
+        'format':'bestaudio/best',
+        'keepvideo':False,
+        'outtmpl':filename,
+    }
+    with youtube_dl.YoutubeDL(options) as ydl:
+        ydl.download([video_info['webpage_url']])
+    print("Download complete... {}".format(filename))
+    return filename
